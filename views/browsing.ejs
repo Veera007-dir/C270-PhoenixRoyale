@@ -191,6 +191,18 @@
                 <p class="card-text"><strong>Rating:</strong> <%= movies[i].rating %></p>
                 <p class="card-text"><strong>Price:</strong> $<%= movies[i].price.toFixed(2) %></p>
                 <a href="/movie/<%= movies[i].movieId %>" class="btn btn-warning">View Details</a>
+                <div class="quantity-buy">
+                  <select class="form-control w-auto"
+                          onchange="document.getElementById('quantity-<%= movies[i].movieId %>').value = this.value">
+                    <% for (let q = 1; q <= 5; q++) { %>
+                      <option value="<%= q %>"><%= q %></option>
+                    <% } %>
+                  </select>
+                  <form action="/add-to-cart/<%= movies[i].movieId %>" method="POST" class="d-inline">
+                    <input type="hidden" name="quantity" id="quantity-<%= movies[i].movieId %>" value="1">
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
