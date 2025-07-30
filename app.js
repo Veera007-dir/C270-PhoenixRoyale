@@ -389,5 +389,14 @@ app.post("/checkout", (req, res) => {
   });
 });
 
+// Upcoming(coming soon) route
+app.get('/upcoming', checkAuthenticated, (req, res) => {
+    // Fetch data from MySQL
+    connection.query('SELECT * FROM movies', (error, results) => {
+      if (error) throw error;
+      res.render('upcoming', { movies: results, user: req.session.user });
+    });
+}); 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
