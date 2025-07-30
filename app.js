@@ -21,7 +21,11 @@ const connection = mysql.createConnection({
     host: 'c237ca2.mysql.database.azure.com',
     user: 'c237admin',
     password: 'Bingkiat2809',
-    database: 'c237admin'
+    database: 'c237admin',
+    port: 3306,
+    ssl: {
+        rejectUnauthorized: true
+     },
   });
 
 connection.connect((err) => {
