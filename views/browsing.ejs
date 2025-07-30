@@ -162,53 +162,24 @@
       <h2>Now Showing</h2>
     </div>
 
-    <div class="carousel-container mt-4 position-relative">
-      <button class="carousel-arrow arrow-left" onclick="scrollCarousel(-1)">&#10094;</button>
-      <div class="carousel-wrapper" id="carousel">
-        <% for(let i = 0; i < movies.length; i++) { %>
-          <div class="movie-card">
-            <img src="images/<%= movies[i].image %>" alt="<%= movies[i].moviename %> Poster">
-            <div class="movie-details">
-              <div class="movie-title">
-                <a href="/movie/<%= movies[i].movieId %>"><%= movies[i].moviename %></a>
-              </div>
-              <div class="movie-meta">
-                <p>Genre: <%= movies[i].genre %></p>
-                <p>Rating: <%= movies[i].rating %></p>
-                <p>Runtime: <%= movies[i].runtime %></p>
-                <p>Opening: <%= new Date(movies[i].opening).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></p>
-                <p>Show Day: <%= new Date(movies[i].showday).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></p>
-                <p>Show Time: <%= new Date("1970-01-01T" + movies[i].showtime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
-                <p>Seats: <%= movies[i].seatcapacity %></p>
-                <p>Price: $<%= movies[i].price.toFixed(2) %></p>
-                <p>Synopsis: <%= movies[i].synopsis %></p>
-              </div>
-              <div class="quantity-buy">
-                <select class="form-control w-auto"
-                        onchange="document.getElementById('quantity-<%= movies[i].movieId %>').value = this.value">
-                  <% for (let q = 1; q <= 5; q++) { %>
-                    <option value="<%= q %>"><%= q %></option>
-                  <% } %>
-                </select>
-                <form action="/add-to-cart/<%= movies[i].movieId %>" method="POST" class="d-inline">
-                  <input type="hidden" name="quantity" id="quantity-<%= movies[i].movieId %>" value="1">
-                  <button type="submit" class="btn btn-primary">Buy</button>
-                </form>
-              </div>
+  <div class="container mt-4">
+   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-[100px]">
+      <% for(let i = 0; i < movies.length; i++) { %>
+        <div class="col">
+          <div class="card h-100 bg-dark text-white">
+            <img src="images/<%= movies[i].image %>" class="card-img-top" alt="<%= movies[i].moviename %>">
+              <div class="card-body">
+               <h5 class="card-title text-warning"><%= movies[i].moviename %></h5>
+               <p class="card-text"><strong>Genre:</strong> <%= movies[i].genre %></p>
+               <p class="card-text"><strong>Rating:</strong> <%= movies[i].rating %></p>
+               <p class="card-text"><strong>Price:</strong> $<%= movies[i].price.toFixed(2) %></p>
+               <a href="/movie/<%= movies[i].movieId %>" class="btn btn-warning">View Details</a>
+             </div>
             </div>
           </div>
         <% } %>
       </div>
-      <button class="carousel-arrow arrow-right" onclick="scrollCarousel(1)">&#10095;</button>
     </div>
   </div>
-
-  <script>
-    function scrollCarousel(direction) {
-      const carousel = document.getElementById('carousel');
-      const cardWidth = carousel.querySelector('.movie-card').offsetWidth;
-      carousel.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
-    }
-  </script>
 </body>
 </html>
