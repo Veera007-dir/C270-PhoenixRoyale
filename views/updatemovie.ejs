@@ -124,8 +124,8 @@
       </div>
 
       <div class="mb-3">
-        <label for="rating" class="form-label">Rating</label>
-        <select class="form-control" id="rating" name="rating" required>
+        <label for="rating">Rating:</label>
+        <input type="text" id="rating" name="rating" class="form-control" required value="<%= movies.rating %>">
           <option value="">-- Select Rating --</option>
           <option value="G">G (General)</option>
           <option value="PG">PG (Parental Guidance)</option>
