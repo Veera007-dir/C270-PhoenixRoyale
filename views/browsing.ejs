@@ -161,20 +161,37 @@
     <div class="text-center">
       <h2>Now Showing</h2>
     </div>
-
-  <div class="container mt-4">
-   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-[100px]">
-      <% for(let i = 0; i < movies.length; i++) { %>
-        <div class="col">
-          <div class="card h-100 bg-dark text-white">
-            <img src="images/<%= movies[i].image %>" class="card-img-top" alt="<%= movies[i].moviename %>">
+    
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <input type="text" class="form-control bg-dark text-white" id="searchInput" placeholder="Search movies..." onkeyup="filterMovies()">
+        </div>
+        <div class="col-md-6">
+          <select class="form-select bg-dark text-white" id="genreFilter" onchange="filterMovies()">
+            <option value="">All Genres</option>
+            <% const uniqueGenres = [...new Set(movies.map(movie => movie.genre))]; %>
+            <% uniqueGenres.forEach(genre => { %>
+              <option value="<%= genre %>"><%= genre %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container mt-4">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <% for(let i = 0; i < movies.length; i++) { %>
+          <div class="col">
+            <div class="card h-100 bg-dark text-white">
+              <img src="images/<%= movies[i].image %>" class="card-img-top" alt="<%= movies[i].moviename %>">
               <div class="card-body">
-               <h5 class="card-title text-warning"><%= movies[i].moviename %></h5>
-               <p class="card-text"><strong>Genre:</strong> <%= movies[i].genre %></p>
-               <p class="card-text"><strong>Rating:</strong> <%= movies[i].rating %></p>
-               <p class="card-text"><strong>Price:</strong> $<%= movies[i].price.toFixed(2) %></p>
-               <a href="/movie/<%= movies[i].movieId %>" class="btn btn-warning">View Details</a>
-             </div>
+                <h5 class="card-title text-warning"><%= movies[i].moviename %></h5>
+                <p class="card-text"><strong>Genre:</strong> <%= movies[i].genre %></p>
+                <p class="card-text"><strong>Rating:</strong> <%= movies[i].rating %></p>
+                <p class="card-text"><strong>Price:</strong> $<%= movies[i].price.toFixed(2) %></p>
+                <a href="/movie/<%= movies[i].movieId %>" class="btn btn-warning">View Details</a>
+              </div>
             </div>
           </div>
         <% } %>
@@ -183,3 +200,20 @@
   </div>
 </body>
 </html>
+
+<script>
+  function filterMovies() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const genreFilter = document.getElementById('genreFilter').value;
+    
+    document.querySelectorAll('.col').forEach(card => {
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      const genre = card.querySelector('.card-text:nth-of-type(1)').textContent.split(':')[1].trim();
+      
+      const matchesSearch = title.includes(searchTerm);
+      const matchesGenre = !genreFilter || genre === genreFilter;
+      
+      card.style.display = (matchesSearch && matchesGenre) ? 'block' : 'none';
+    });
+  }
+</script>
