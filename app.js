@@ -314,12 +314,22 @@ app.post("/checkout", (req, res) => {
   const cart = req.session.cart || [];
   const user = req.session.user;
 
+  // If user not logged in, redirect
   if (!user) return res.redirect("/login");
+
+  // If cart is empty, show message
   if (cart.length === 0) return res.send("Your cart is empty.");
 
-  let finalCart = [];
-  let processed = 0;
+  const finalCart = [];    // Will store the final list of items for receipt
+  let processed = 0;       // To track how many items we've processed
 
+  // Final step after processing all items
+  const completeCheckout = () => {
+    req.session.cart = [];  // Clear the cart after checkout
+    res.render("receipt", { cart: finalCart });  // Show the receipt
+  };
+
+  // Go through each item in the cart
   cart.forEach((item) => {
     connection.query(
       "SELECT seatcapacity, showday, showtime FROM movies WHERE movieId = ?",
@@ -333,52 +343,51 @@ app.post("/checkout", (req, res) => {
         const movie = results[0];
 
         if (!movie) {
+          // If no movie found, skip to next
           processed++;
-          if (processed === cart.length) finishCheckout();
+          if (processed === cart.length) completeCheckout();
           return;
         }
 
+        // If seats are available
         if (movie.seatcapacity >= item.quantity) {
           connection.query(
             "UPDATE movies SET seatcapacity = seatcapacity - ? WHERE movieId = ?",
             [item.quantity, item.movieId],
             (err) => {
-              if (err) {
-                console.error("Error updating seatcapacity:", err.message);
-              }
+              if (err) console.error("Error updating seatcapacity:", err.message);
 
-              movie.soldOut = false;
-              movie.quantity = item.quantity;
-              movie.price = item.price;
-              movie.total = item.price * item.quantity;
-              movie.name = item.moviename || item.movieName;
+              finalCart.push({
+                ...movie,
+                soldOut: false,
+                quantity: item.quantity,
+                price: item.price,
+                total: item.price * item.quantity,
+                name: item.moviename || item.movieName
+              });
 
-              finalCart.push(movie);
               processed++;
-              if (processed === cart.length) finishCheckout();
+              if (processed === cart.length) completeCheckout();
             }
           );
         } else {
-          movie.soldOut = true;
-          movie.quantity = 0;
-          movie.price = item.price;
-          movie.total = 0;
-          movie.name = item.moviename || item.movieName;
+          // Not enough seats
+          finalCart.push({
+            ...movie,
+            soldOut: true,
+            quantity: 0,
+            price: item.price,
+            total: 0,
+            name: item.moviename || item.movieName
+          });
 
-          finalCart.push(movie);
           processed++;
-          if (processed === cart.length) finishCheckout();
+          if (processed === cart.length) completeCheckout();
         }
       }
     );
   });
-
-  function finishCheckout() {
-    req.session.cart = [];
-    res.render("receipt", { cart: finalCart });
-  }
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
