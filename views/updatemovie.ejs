@@ -125,14 +125,13 @@
 
       <div class="mb-3">
         <label for="rating">Rating:</label>
-        <input type="text" id="rating" name="rating" class="form-control" required value="<%= movies.rating %>">
-          <option value="">-- Select Rating --</option>
-          <option value="G">G (General)</option>
-          <option value="PG">PG (Parental Guidance)</option>
-          <option value="PG13">PG13 (Parental Guidance 13)</option>
-          <option value="NC16">NC16 (No Children under 16)</option>
-          <option value="M18">M18 (Mature 18)</option>
-          <option value="R21">R (Restricted 21)</option>
+        <select id="rating" id="rating" name="rating" class="form-control" required value="<%= movies.rating %>">
+          <option value="G" <%= movies.rating === 'G' ? 'selected' : '' %>>G (General)</option>
+          <option value="PG" <%= movies.rating === 'PG' ? 'selected' : '' %>>PG (Parental Guidance)</option>
+          <option value="PG13" <%= movies.rating === 'PG13' ? 'selected' : '' %>>PG13 (Parental Guidance 13)</option>
+          <option value="NC16" <%= movies.rating === 'NC16' ? 'selected' : '' %>>NC16 (No Children under 16)</option>
+          <option value="M18" <%= movies.rating === 'M18' ? 'selected' : '' %>>M18 (Mature 18)</option>
+          <option value="R21" <%= movies.rating === 'R21' ? 'selected' : '' %>>R21 (Restricted 21)</option>
         </select>
       </div>
 
