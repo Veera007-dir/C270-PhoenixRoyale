@@ -21,7 +21,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'Republic_C207',
-    database: 'phoenix'
+    database: 'phoenixroyale'
   });
 
 connection.connect((err) => {
@@ -93,11 +93,11 @@ app.get('/',  (req, res) => {
     res.render('index', {user: req.session.user} );
 });
 
-app.get('/movieinventory', checkAuthenticated, checkAdmin, (req, res) => {
+app.get('/movielibrary', checkAuthenticated, checkAdmin, (req, res) => {
     // Fetch data from MySQL
     connection.query('SELECT * FROM movies', (error, results) => {
       if (error) throw error;
-      res.render('movieinventory', { movies: results, user: req.session.user });
+      res.render('movielibrary', { movies: results, user: req.session.user });
     });
 });
 
@@ -146,7 +146,7 @@ app.post('/login', (req, res) => {
             if(req.session.user.role == 'user')
                 res.redirect('/browsing');
             else
-                res.redirect('/movieinventory');
+                res.redirect('/movielibrary');
         } else {
             // Invalid credentials
             req.flash('error', 'Invalid email or password.');
@@ -249,7 +249,7 @@ app.post('/addmovie', upload.single('image'),  (req, res) => {
             res.status(500).send('Error adding movie');
         } else {
             // Send a success response
-            res.redirect('/movieinventory');
+            res.redirect('/movielibrary');
         }
     });
 });
@@ -290,7 +290,7 @@ app.post('/updatemovie/:id', upload.single('image'), (req, res) => {
             res.status(500).send('Error updating movie');
         } else {
             // Send a success response
-            res.redirect('/movieinventory');
+            res.redirect('/movielibrary');
         }
     });
 });
@@ -305,7 +305,7 @@ app.get('/deletemovie/:id', (req, res) => {
             res.status(500).send('Error deleting movie');
         } else {
             // Send a success response
-            res.redirect('/movieinventory');
+            res.redirect('/movielibrary');
         }
     });
 });
