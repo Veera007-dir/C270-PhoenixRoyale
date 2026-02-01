@@ -18,10 +18,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Republic_C207',
-    database: 'phoenixroyale'
+    host: 'xqb1l6.h.filess.io',
+    user: 'Devops_whitenewus',
+    password: '03b0cdd885ed817d915065801a7a0430cc0ee8b5',
+    database: 'Devops_whitenewus'
   });
 
 connection.connect((err) => {
@@ -254,46 +254,7 @@ app.post('/addmovie', upload.single('image'),  (req, res) => {
     });
 });
 
-app.get('/updatemovie/:id',checkAuthenticated, checkAdmin, (req,res) => {
-    const movieId = req.params.id;
-    const sql = 'SELECT * FROM movies WHERE movieId = ?';
-
-    // Fetch data from MySQL based on the movie ID
-    connection.query(sql , [movieId], (error, results) => {
-        if (error) throw error;
-
-        // Check if any movie with the given ID was found
-        if (results.length > 0) {
-            // Render HTML page with the movie data
-            res.render('updatemovie', { movies: results[0] });
-        } else {
-            // If no movie with the given ID was found, render a 404 page or handle it accordingly
-            res.status(404).send('movie not found');
-        }
-    });
-});
-
-app.post('/updatemovie/:id', upload.single('image'), (req, res) => {
-    const movieId = req.params.id;
-    const { moviename,synopsis,seatcapacity,showday,showtime,price,genre,rating,runtime,opening} = req.body;
-    let image  = req.body.currentImage; 
-    if (req.file) { 
-        image = req.file.filename; 
-    } 
-
-    const sql = 'UPDATE movies SET moviename =?,synopsis=?,seatcapacity=?,showday=?,showtime=?,price=?,image=?,genre=?,rating=?,runtime=?,opening=? WHERE movieId = ?';
-    // Insert the new movie into the database
-    connection.query(sql, [moviename,synopsis,seatcapacity,showday,showtime,price,image,genre,rating,runtime,opening, movieId], (error, results) => {
-        if (error) {
-            // Handle any error that occurs during the database operation
-            console.error("Error updating movie:", error);
-            res.status(500).send('Error updating movie');
-        } else {
-            // Send a success response
-            res.redirect('/movielibrary');
-        }
-    });
-});
+//To add edit movie route 
 
 app.get('/deletemovie/:id', (req, res) => {
     const movieId = req.params.id;
@@ -310,26 +271,26 @@ app.get('/deletemovie/:id', (req, res) => {
     });
 });
 
-app.post("/checkout", (req, res) => {
+// add receipt a route for checkout and delete the route to browsing
+
+app.post("/browsing", (req, res) => {
   const cart = req.session.cart || [];
   const user = req.session.user;
 
   // If user not logged in, redirect
   if (!user) return res.redirect("/login");
 
-  // If cart is empty, show message
-  if (cart.length === 0) return res.send("Your cart is empty.");
+  // If cart is empty, just go back to browsing (no checkout)
+  if (cart.length === 0) return res.redirect("/browsing");
 
-  const finalCart = [];    // Will store the final list of items for receipt
-  let processed = 0;       // To track how many items we've processed
+  const finalCart = [];
+  let processed = 0;
 
-  // Final step after processing all items
   const completeCheckout = () => {
-    req.session.cart = [];  // Clear the cart after checkout
-    res.render("receipt", { cart: finalCart });  // Show the receipt
+    req.session.cart = []; // Clear the cart after checkout
+    return res.redirect("/browsing"); // Go back to browsing page
   };
 
-  // Go through each item in the cart
   cart.forEach((item) => {
     connection.query(
       "SELECT seatcapacity, showday, showtime FROM movies WHERE movieId = ?",
@@ -343,13 +304,11 @@ app.post("/checkout", (req, res) => {
         const movie = results[0];
 
         if (!movie) {
-          // If no movie found, skip to next
           processed++;
           if (processed === cart.length) completeCheckout();
           return;
         }
 
-        // If seats are available
         if (movie.seatcapacity >= item.quantity) {
           connection.query(
             "UPDATE movies SET seatcapacity = seatcapacity - ? WHERE movieId = ?",
@@ -371,7 +330,6 @@ app.post("/checkout", (req, res) => {
             }
           );
         } else {
-          // Not enough seats
           finalCart.push({
             ...movie,
             soldOut: true,
