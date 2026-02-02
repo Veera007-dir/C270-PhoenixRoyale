@@ -1,9 +1,9 @@
 #!/bin/bash
 
-mkdir tempdir
-mkdir tempdir/node_modules
-mkdir tempdir/public
-mkdir tempdir/views
+mkdir -p tempdir
+mkdir -p tempdir/node_modules
+mkdir -p tempdir/public
+mkdir -p tempdir/views
 cp app.js tempdir/.
 cp -r node_modules/* tempdir/node_modules/.
 cp -r public/* tempdir/public/.
@@ -18,7 +18,8 @@ echo "EXPOSE 3000" >> tempdir/Dockerfile
 echo 'CMD ["node","app.js"]' >> tempdir/Dockerfile
 cd tempdir
 docker build -t phoenixroyaledocker .
-docker run -t -d -p 8080:3000 \
+docker rm -f phoenixroyalerunning 2>/dev/null
+docker run -t -d -p 5050:3000 \
   -v /home/veera/DevopsCa2/PhoenixRoyale/public/images:/home/veera/DevopsCa2/PhoenixRoyale/public/images \
   --name phoenixroyalerunning phoenixroyaledocker
 docker ps -a
