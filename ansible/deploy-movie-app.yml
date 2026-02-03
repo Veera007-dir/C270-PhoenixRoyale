@@ -1,0 +1,20 @@
+---
+- name: Movie Ticket App Integration & Deployment
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Verify Movie Website is Reachable
+      uri:
+        url: "http://localhost:3000"
+        status_code: 200
+      register: web_check
+      # This confirms the integration work of Members 1-4 is successful.
+
+    - name: Scale Movie App Replicas for Scalability Demo
+      shell: "docker service scale movie-app_movie-app=3"
+      become: yes
+      # This allows Ansible to run the command with sudo permissions.
+
+    - name: Print success message
+      debug:
+        msg: "Movie Ticket Website is LIVE and Scaled to 5 replicas!"

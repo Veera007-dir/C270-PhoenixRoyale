@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  movie-app:
+    image: movie-app:latest
+    build: .
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
