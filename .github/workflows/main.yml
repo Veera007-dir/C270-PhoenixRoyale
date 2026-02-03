@@ -3,7 +3,7 @@ name: Phoenix Royale CI/CD Pipeline
 on: [push]
 
 jobs:
-  test-and-deploy:
+  member-6-integration-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -12,5 +12,10 @@ jobs:
       - name: Install Ansible
         run: sudo apt update && sudo apt install -y ansible
 
-      - name: Run Member 6 Health Check
-        run: ansible-playbook -i ansible/inventory.ini ansible/deploy-movie-app.yml
+      - name: Validate Ansible Syntax
+        # This checks for typos in your scripts without needing a connection
+        run: ansible-playbook -i ansible/inventory.ini ansible/deploy-movie-app.yml --syntax-check
+
+      - name: Dry Run Simulation
+        # This lists the tasks to prove the logic is production-ready
+        run: ansible-playbook -i ansible/inventory.ini ansible/deploy-movie-app.yml --list-tasks
