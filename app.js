@@ -89,9 +89,9 @@ const validateRegistration = (req, res, next) => {
 };
 
 // Define routes
-// app.get('/',  (req, res) => {
-//     res.render('index', {user: req.session.user} );
-// });
+app.get('/',  (req, res) => {
+    res.render('index', {user: req.session.user} );
+});
 
 app.get('/movielibrary', checkAuthenticated, checkAdmin, (req, res) => {
     // Fetch data from MySQL
