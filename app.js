@@ -93,13 +93,13 @@ app.get('/',  (req, res) => {
     res.render('index', {user: req.session.user} );
 });
 
-app.get('/movielibrary', checkAuthenticated, checkAdmin, (req, res) => {
-    // Fetch data from MySQL
-    connection.query('SELECT * FROM movies', (error, results) => {
-      if (error) throw error;
-      res.render('movielibrary', { movies: results, user: req.session.user });
-    });
-});
+// app.get('/movielibrary', checkAuthenticated, checkAdmin, (req, res) => {
+//     // Fetch data from MySQL
+//     connection.query('SELECT * FROM movies', (error, results) => {
+//       if (error) throw error;
+//       res.render('movielibrary', { movies: results, user: req.session.user });
+//     });
+// });
 
 app.get('/register', (req, res) => {
     res.render('register', { messages: req.flash('error'), formData: req.flash('formData')[0] });
